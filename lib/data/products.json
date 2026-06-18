@@ -1,0 +1,40 @@
+{
+  "featured": [
+    {
+      "id": 1,
+      "name": "Solar Water Heaters",
+      "image": "/images/swh.jpg",
+      "description": "High-quality solar water heaters for residential and commercial use"
+    },
+    {
+      "id": 2,
+      "name": "Solar Panels",
+      "image": "/images/s_pannel.jpg",
+      "description": "Efficient solar panels for energy generation"
+    },
+    {
+      "id": 3,
+      "name": "Gel Batteries",
+      "image": "/images/ssb1.jpeg",
+      "description": "Reliable gel batteries for energy storage"
+    },
+    {
+      "id": 4,
+      "name": "Lithium Batteries",
+      "image": "/images/ssb2.png",
+      "description": "Advanced lithium batteries for optimal performance"
+    },
+    {
+      "id": 5,
+      "name": "Solar Lights",
+      "image": "/images/s_glight.jpg",
+      "description": "Energy-efficient solar lighting solutions"
+    },
+    {
+      "id": 6,
+      "name": "Garden Lights",
+      "image": "/images/grdlight.jpg",
+      "description": "Beautiful garden lights powered by solar energy"
+    }
+  ]
+}

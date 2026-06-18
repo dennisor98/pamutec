@@ -1,0 +1,42 @@
+{
+  "categories": [
+    {
+      "id": "water-heating",
+      "name": "Water Heating Solar Panels",
+      "products": [
+        { "id": "wh1", "image": "/images/ss2.jpeg", "name": "Solar Panel 1" },
+        { "id": "wh2", "image": "/images/ss3.jpeg", "name": "Solar Panel 2" },
+        { "id": "wh3", "image": "/images/ss12.jpeg", "name": "Solar Panel 3" },
+        { "id": "wh4", "image": "/images/ss14.jpeg", "name": "Solar Panel 4" },
+        { "id": "wh5", "image": "/images/ss15.jpeg", "name": "Solar Panel 5" },
+        { "id": "wh6", "image": "/images/ss11.jpeg", "name": "Solar Panel 6" },
+        { "id": "wh7", "image": "/images/ss10.jpeg", "name": "Solar Panel 7" },
+        { "id": "wh8", "image": "/images/ss12.jpeg", "name": "Solar Panel 8" },
+        { "id": "wh9", "image": "/images/ss6.jpeg", "name": "Solar Panel 9" },
+        { "id": "wh10", "image": "/images/ss7.jpeg", "name": "Solar Panel 10" },
+        { "id": "wh11", "image": "/images/ss8.jpeg", "name": "Solar Panel 11" },
+        { "id": "wh12", "image": "/images/ss18.jpeg", "name": "Solar Panel 12" },
+        { "id": "wh13", "image": "/images/ss17.jpeg", "name": "Solar Panel 13" }
+      ]
+    },
+    {
+      "id": "solar-batteries",
+      "name": "Solar Batteries",
+      "products": [
+        { "id": "sb1", "image": "/images/btr.jpeg", "name": "Battery 1" },
+        { "id": "sb2", "image": "/images/ssb1.jpeg", "name": "Battery 2" }
+      ]
+    },
+    {
+      "id": "leds-street-lights",
+      "name": "LEDs & Street Lights",
+      "products": [
+        { "id": "led1", "image": "/images/p1.png", "name": "LED Light 1" },
+        { "id": "led2", "image": "/images/street.png", "name": "Street Light 1" },
+        { "id": "led3", "image": "/images/street2.png", "name": "Street Light 2" },
+        { "id": "led4", "image": "/images/street3.png", "name": "Street Light 3" },
+        { "id": "led5", "image": "/images/street4.png", "name": "Street Light 4" }
+      ]
+    }
+  ]
+}

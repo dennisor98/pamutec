@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seven Stars Solar Energy Company Limited</title>
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+  <header class="bg-gray-800">
+    <div :class="open ? 'block': 'hidden'" class="w-full flex-grow sm:flex sm:items-center sm:w-auto bg-green-100">
+      <div class="w-full container mx-auto flex flex-col sm:flex-row items-center justify-center text-sm font-bold uppercase mt-0 px-6 py-2">
+          <a href="index.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Home</a>
+          <a href="about.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">About Us</a>
+          <a href="#" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">our Products</a>
+          <a href="catalog.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Catalog</a>
+          <a href="#" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Culture</a>
+          <a href="#" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Prices</a>
+      </div>
+  </div>
+  </header>
+  <div class="container flex mx-auto flex-wrap">
+    <div class="product-card p-4 bg-white rounded-lg shadow-md">
+        <img src="images/prices.png" alt="Product 1" class="w-full h-screen  rounded-lg mb-4">
+      </div>
+  </div>
+</body>

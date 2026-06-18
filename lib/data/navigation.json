@@ -1,0 +1,14 @@
+{
+  "mainNav": [
+    { "label": "Home", "href": "#home" },
+    { "label": "About Us", "href": "#about" },
+    { "label": "Our Products", "href": "#products" },
+    { "label": "Catalog", "href": "#catalog" },
+    { "label": "Prices", "href": "#prices" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "footerNav": [
+    { "label": "About Us", "href": "#about" },
+    { "label": "Contact Us", "href": "#contact" }
+  ]
+}

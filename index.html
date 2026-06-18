@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Systems</title>
+    <meta name="company" content="Seven SS Stars">
+    <meta name="product" content="Solar">
+
+    <!-- Tailwind -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
+
+        .font-family-karla {
+            font-family: karla;
+        }
+    </style>
+
+    <!-- AlpineJS -->
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+        integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-white font-family-karla">
+
+    <nav>
+        <div class="bg-slate-300 flex flex-row p-4" style="height: 100px;">
+            <div class="flex flex-col justify-start">
+                <img class="hover:opacity-75" src="images/logo.png">
+                <!-- <h1 class="mt-4" style="font-size: 28px;">SEVENS SS STARS KENYA</h1> -->
+                <div>
+                    <p style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">The Best Water
+                        Solar Heaters Provider</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Text Header -->
+    <header class="w-full container mx-auto">
+        <div class="flex flex-col items-center py-12">
+            <a class="font-bold text-gray-800 uppercase hover:text-gray-700 text-5xl" href="#">
+                Company X
+            </a>
+            <p class="text-lg text-gray-600">
+                We Lead,Others Follow
+            </p>
+        </div>
+    </header>
+
+
+    <!-- Topic Nav -->
+    <nav class="w-full py-4 border-t border-b bg-gray-100" x-data="{ open: false }">
+        <div class="block sm:hidden">
+            <a href="#"
+                class="block md:hidden text-base font-bold uppercase text-center flex justify-center items-center"
+                @click="open = !open">
+                Topics <i :class="open ? 'fa-chevron-down': 'fa-chevron-up'" class="fas ml-2"></i>
+            </a>
+        </div>
+        <div :class="open ? 'block': 'hidden'" class="w-full flex-grow sm:flex sm:items-center sm:w-auto bg-green-100">
+            <div
+                class="w-full container mx-auto flex flex-col sm:flex-row items-center justify-center text-sm font-bold uppercase mt-0 px-6 py-2">
+                <a href="index.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Home</a>
+                <a href="about.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">About Us</a>
+                <a href="products.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">our Products</a>
+                <a href="catalog.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Catalog</a>
+                <a href="#" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Culture</a>
+                <a href="prices.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Prices</a>
+            </div>
+        </div>
+    </nav>
+    <div id="carousel" class=" flex mx-auto justify-center m-4"
+        style="width: fit-content;overflow-x: hidden;justify-content: center;height: 400px;">
+        <div id="carousel-images" class="card rounded-md flex flex-row  w-full m-0 lg:m-4 md:m-4"></div>
+    </div>
+
+
+    <div class="container flex mx-auto flex-wrap py-6 justify-center">
+        <div class="card">
+            <div class="card-header text-blue-500" style="font-family: Georgia, 'Times New Roman', Times, serif;font-size: larger;">About Us</div>
+            <div class="cols cols-4">
+                We have a complete line of pressurized and nonpressurized solar water heater Kenya available in a variety of capacities to suit your needs. We offer the best solar water heater prices in Kenya.
+                Our range of products include solar collector, split solar water heaters, integrated solar water heaters, vacuum tube, and flat plate solar water heaters.
+                We have been approved by KEBS and EPRA (Energy and Petroleum Regulatory Authority) in Kenya. We also work with ERC certified technicians for installation.
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-4 gap-4 m-4">
+            <div class="span-12 lg:span-4 md:span-4 card rounded-md w-full">
+                <div class="card-header text-green-400 text-center" style="font-size: 22px;">Solar Water Heaters</div>
+                <!-- <div class="card" > -->
+                <img src="images/swh.jpg"  style="height: 400px;" class="w-full"/>
+                <!-- </div> -->
+            </div>
+
+            <div class="span-12 lg:span-4 md:span-4 card rounded-md">
+                <div class="card-header text-green-400 text-center" style="font-size: 22px;">Solar Pannels</div>
+                <!-- <div class="card" > -->
+                <img src="images/s_pannel.jpg"  style="height: 400px;" class="w-full"/>
+                <!-- </div> -->
+            </div>
+
+            <div class="span-12 lg:span-4 md:span-4 card rounded-md">
+                <div class="card-header text-green-400 text-center" style="font-size: 22px;">Gel Batteries</div>
+                <!-- <div class="card" > -->
+                <img src="images/ssb1.jpeg"  style="height: 400px;" class="w-full"/>
+                <!-- </div> -->
+            </div>
+
+            <div class="span-12 lg:span-4 md:span-4 card rounded-md">
+                <div class="card-header text-green-400 text-center" style="font-size: 22px;">Lithium Batteries</div>
+                <!-- <div class="card" > -->
+                <img src="images/ssb2.png"  style="height: 400px;" class="w-full"/>
+                <!-- </div> -->
+            </div>
+
+            <div class="span-12 lg:span-4 md:span-4 card rounded-md">
+                <div class="card-header text-green-400 text-center" style="font-size: 22px;">Solar Lights</div>
+                <!-- <div class="card" > -->
+                <img src="images/s_glight.jpg"  style="height: 400px;" class="w-full"/>
+                <!-- </div> -->
+            </div>
+            <div class="span-12 lg:span-4 md:span-4 card rounded-md">
+                <div class="card-header text-green-400 text-center" style="font-size: 22px;">Garden Lights</div>
+                <!-- <div class="card" > -->
+                <img src="images/grdlight.jpg"  style="height: 400px;" class="w-full"/>
+                <!-- </div> -->
+            </div>
+
+
+        </div>
+    </div>
+    <!-- Posts Section -->
+    
+
+    </div>
+
+    <footer class="w-full border-t bg-white pb-12">
+        
+        <div class="w-full container mx-auto flex flex-col items-center">
+            <div class="flex flex-col md:flex-row text-center md:text-left md:justify-between py-6">
+                <a href="#" class="uppercase px-3">About Us</a>
+                <a href="#" class="uppercase px-3">Privacy Policy</a>
+                <a href="#" class="uppercase px-3">Terms & Conditions</a>
+                <a href="#" class="uppercase px-3">Contact Us</a>
+            </div>
+            <div class="uppercase pb-6">&copy;Open Market Technologies</div>
+        </div>
+    </footer>
+
+    <script>
+        const carouselData = {
+            currentIndex: 0,
+            images: [
+                'images/ss1.jpeg',
+                'images/ss2.jpeg',
+                'images/ss3.jpeg',
+                'images/ss4.jpeg',
+                'images/ss5.jpeg',
+                'images/ss6.jpeg',
+                'images/ss7.jpeg',
+                'images/ss8.jpeg',
+                'images/ss9.jpeg',
+                'images/ss10.jpeg',
+                'images/ss11.jpeg',
+                'images/ss12.jpeg',
+                'images/ss13.jpeg',
+                'images/ss14.jpeg',
+                'images/ss15.jpeg',
+                'images/ss16.jpeg',
+                'images/ss17.jpeg',
+                'images/ss18.jpeg',
+                'images/ss19.jpeg',
+                'images/ss20.jpeg',
+                'images/ss21.jpeg',
+                'images/ss22.jpeg',
+
+
+            ],
+        };
+
+        const carouselContainer = document.getElementById('carousel-images');
+
+        function renderCarousel() {
+            carouselContainer.innerHTML = carouselData.images.map(image => `<img src="${image}" style="width:100%" alt="carousel-image">`).join('');
+            carouselContainer.style.transform = `translateX(${-carouselData.currentIndex * 100}%)`;
+        }
+
+        function nextSlide() {
+            carouselData.currentIndex = (carouselData.currentIndex + 1) % carouselData.images.length;
+            renderCarousel();
+        }
+
+        function prevSlide() {
+            carouselData.currentIndex = (carouselData.currentIndex - 1 + carouselData.images.length) % carouselData.images.length;
+            renderCarousel();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function randomizeImages() {
+            shuffleArray(carouselData.images);
+            renderCarousel();
+        }
+
+        // Initial render
+        renderCarousel();
+
+        // Randomize images every 3 seconds
+        setInterval(randomizeImages, 3000);
+    </script>
+
+
+</body>
+
+</html>

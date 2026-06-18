@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solar Systems</title>
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+  <header class="bg-gray-800">
+    <div :class="open ? 'block': 'hidden'" class="w-full flex-grow sm:flex sm:items-center sm:w-auto bg-green-100">
+      <div class="w-full container mx-auto flex flex-col sm:flex-row items-center justify-center text-sm font-bold uppercase mt-0 px-6 py-2">
+          <a href="index.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Home</a>
+          <a href="about.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">About Us</a>
+          <a href="#" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">our Products</a>
+          <a href="catalog.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Catalog</a>
+          <a href="#" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Culture</a>
+          <a href="prices.html" class="hover:bg-gray-400 rounded py-2 px-4 mx-2">Prices</a>
+      </div>
+  </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto py-12">
+    <section class="flex flex-wrap justify-center items-center">
+      <div class="w-full md:w-1/2 p-4">
+        <img src="images/abt.png" alt="Hero image" class="rounded-lg shadow-md" style="height: 50vh;width: 100%;"/>
+      </div>
+      <div class="w-full md:w-1/2 p-4">
+        <h2 class="text-3xl font-bold mb-4">About Pamutec Solar</h2>
+        <p class="text-gray-700 leading-relaxed">
+          Pamutec Solar Energy is a leading manufacturer of thermal solar energy technologies. We have been designing and producing high-quality solar water heaters for over 13 years. Our products are used in homes and businesses around the world, and we are committed to providing clean, reliable, and affordable solar energy solutions.
+        </p>
+      </div>
+    </section>
+<!-- 
+    <section class="bg-gray-100 py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Our Products</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="p-4 bg-white rounded-lg shadow-md">
+            <img src="product-1.jpg" alt="Product 1" class="w-full h-48 object-cover rounded-lg">
+            <h3 class="text-xl font-bold text-gray-800 mt-4">Product 1</h3>
+            <p class="text-gray-600 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod est eu nulla rhoncus laoreet.</p>
+            <a href="#" class="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-4 focus:ring-blue-500">Learn More</a>
+          </div>
+          <div class="p-4 bg-white rounded-lg shadow-md">
+  </section> -->
+  </main>
+</body>
