@@ -1,115 +1,89 @@
-# Seven Stars Solar Energy Company Limited
+# Seven SS Stars Solar — Next.js CMS
 
-A modern Next.js website for Seven Stars Solar Energy Company Limited, featuring solar water heaters, panels, batteries, and lighting solutions.
+Full-stack solar company website with admin CMS, PostgreSQL, and MinIO image storage.
 
-## Tech Stack
+## Stack
+- **Next.js 14** (App Router) + TypeScript
+- **PostgreSQL** — stores about, products, catalog content
+- **MinIO** — S3-compatible image storage
+- **JWT** — admin authentication (httpOnly cookies)
+- **MUI v5** — UI components
 
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Material UI (MUI)** - React component library
-- **Tailwind CSS** - Utility-first CSS framework
-- **Framer Motion** - Animation library
-- **React Icons** - Icon library
+## Quick Start
 
-## Features
+### 1. Start services
+```bash
+docker-compose up -d
+```
+This starts:
+- PostgreSQL on `localhost:5432` (auto-runs migrations)
+- MinIO on `localhost:9000` (console at `localhost:9001`)
 
-- Modern, responsive design
-- Dynamic content from JSON data files
-- Product catalog with filtering and search
-- Smooth animations and transitions
-- Mobile-friendly navigation
-- SEO-optimized with Next.js App Router
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ installed
-- npm or yarn package manager
-
-### Installation
-
-1. Install dependencies:
+### 2. Install dependencies
 ```bash
 npm install
 ```
 
-2. Run the development server:
+### 3. Configure environment
+Copy `.env.local` and update values if needed:
+```env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/sevenss
+MINIO_ENDPOINT=localhost
+MINIO_PORT=9000
+MINIO_USE_SSL=false
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin
+MINIO_BUCKET=sevenss-media
+JWT_SECRET=change-this-in-production
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+### 4. Create admin user
+```bash
+npx tsx scripts/setup-admin.ts
+```
+
+### 5. Run dev server
 ```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
+Visit [http://localhost:3000](http://localhost:3000)
+Admin dashboard: [http://localhost:3000/admin](http://localhost:3000/admin)
 
-### Build for Production
+## Admin CMS
 
-```bash
-npm run build
-npm start
-```
+Login at `/admin` with your configured credentials.
 
-## Project Structure
+### Sections
+| Tab | What you manage |
+|-----|----------------|
+| **About** | Heading, description, mission statement, image |
+| **Products** | Featured products with name, description, price, image |
+| **Catalog** | Categories + items, each with name, description, price, image |
 
-```
-sevenss/
-├── app/                    # Next.js App Router pages
-│   ├── about/             # About page
-│   ├── catalog/           # Product catalog
-│   ├── products/          # Products page
-│   ├── prices/            # Pricing page
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Home page
-│   └── globals.css        # Global styles
-├── components/            # React components
-│   └── layout/           # Layout components
-│       ├── Navbar.tsx    # Navigation bar
-│       └── Footer.tsx    # Footer
-├── lib/                  # Utility files
-│   └── data/            # JSON data files
-│       ├── company.json  # Company information
-│       ├── products.json # Product data
-│       ├── catalog.json # Catalog data
-│       └── navigation.json # Navigation structure
-├── public/              # Static assets
-│   └── assets/         # Images and static files
-└── images/             # Original images (to be moved to assets)
-```
+All images are uploaded to **MinIO** and served via its public URL.  
+Text data is stored in **PostgreSQL**.
 
-## Pages
+## API Routes
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `POST` | `/api/auth` | — | Login, sets httpOnly cookie |
+| `DELETE` | `/api/auth` | — | Logout |
+| `GET/PUT` | `/api/about` | PUT needs admin | About content |
+| `GET/POST` | `/api/products` | POST needs admin | Products list |
+| `PUT/DELETE` | `/api/products/[id]` | admin | Edit/delete product |
+| `GET/POST` | `/api/catalog/categories` | POST needs admin | Categories |
+| `PUT/DELETE` | `/api/catalog/categories/[id]` | admin | Edit/delete category |
+| `POST` | `/api/catalog/items` | admin | Add catalog item |
+| `PUT/DELETE` | `/api/catalog/items/[id]` | admin | Edit/delete item |
+| `POST` | `/api/upload` | admin | Upload image → MinIO |
 
-- **Home** - Hero section, image carousel, featured products, certifications
-- **About** - Company information, mission, certifications
-- **Catalog** - Browseable product catalog with category filtering and search
-- **Products** - Featured products showcase
-- **Prices** - Pricing information
+## Production Deployment
 
-## Customization
-
-### Updating Content
-
-Edit the JSON files in `lib/data/`:
-- `company.json` - Company information, certifications, about text
-- `products.json` - Featured products data
-- `catalog.json` - Complete product catalog with categories
-- `navigation.json` - Navigation menu structure
-
-### Styling
-
-- Tailwind CSS configuration: `tailwind.config.ts`
-- MUI theme: Customized in `app/layout.tsx`
-- Global styles: `app/globals.css`
-
-### Images
-
-Place images in the `public/assets/` directory and update the image paths in the JSON data files.
-
-## Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-
-## License
-
-This project is licensed under ISC License.
+1. Set strong `JWT_SECRET` and `ADMIN_PASSWORD` in env
+2. Use `MINIO_USE_SSL=true` with your MinIO domain
+3. Point `DATABASE_URL` to your production Postgres
+4. Add MinIO hostname to `next.config.js` `remotePatterns`

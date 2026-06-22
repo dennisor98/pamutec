@@ -30,7 +30,7 @@ export default function ContactPage() {
               Contact Us
             </Typography>
             <Typography variant="h6">
-              Get in Touch with Pamutec Solar
+              Get in Touch with Seven SS Stars Solar
             </Typography>
           </Container>
         </Box>
@@ -187,11 +187,11 @@ export default function ContactPage() {
                       Facebook
                     </Typography>
                     <Typography variant="body1" sx={{ mb: 3 }}>
-                      Pamutec Solar Kenya
+                      Seven SS Stars Solar Kenya
                     </Typography>
                     <Button
                       variant="contained"
-                      href="https://www.facebook.com/PamutecSolarKenya/"
+                      href="https://www.facebook.com/pamutecSolarKenya/"
                       target="_blank"
                       sx={{ width: '100%', bgcolor: '#1877F2', '&:hover': { bgcolor: '#0d5bbd' } }}
                     >
@@ -221,7 +221,7 @@ export default function ContactPage() {
                     </Typography>
                     <Button
                       variant="contained"
-                      href="https://m.me/PamutecSolarKenya"
+                      href="https://m.me/pamutecSolarKenya"
                       target="_blank"
                       sx={{ width: '100%', bgcolor: '#00B2FF', '&:hover': { bgcolor: '#0084cc' } }}
                     >
@@ -253,7 +253,7 @@ export default function ContactPage() {
                     <Button
                       variant="outlined"
                       color="primary"
-                      href="https://www.google.com/maps/place/Atlantis+Business+Park/@-1.3430387,36.8794513,17z/data=!4m14!1m7!3m6!1s0x182f0df6dd2d8809:0x8ae8ff2732fb1eab!2sAtlantis+Business+Park!8m2!3d-1.3430441!4d36.8820262!16s%2Fg%2F11ggsz8s3p!3m5!1s0x182f0df6dd2d8809:0x8ae8ff2732fb1eab!8m2!3d-1.3430441!4d36.8820262!16s%2Fg%2F11ggsz8s3p?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D"
+                      href="https://www.google.com/maps/place/Antarc+Healthcare+Ltd/@-1.3430387,36.8794513,17z/data=!4m14!1m7!3m6!1s0x182f0df6dd2d8809:0x8ae8ff2732fb1eab!2sAtlantis+Business+Park!8m2!3d-1.3430441!4d36.8820262!16s%2Fg%2F11ggsz8s3p!3m5!1s0x182f13921eaaa0cd:0x66a469ab25a5260c!8m2!3d-1.3425397!4d36.8818289!16s%2Fg%2F11fl7p9_wj?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D"
                       target="_blank"
                       sx={{ width: '100%' }}
                     >

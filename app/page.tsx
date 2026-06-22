@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Box, Container, Typography, Grid, Card, CardMedia, CardContent, Button, TextField, Chip } from '@mui/material';
+import { Box, Container, Typography, Grid, Card, CardContent, Button, TextField, Chip } from '@mui/material';
 import { motion } from 'framer-motion';
 import SearchIcon from '@mui/icons-material/Search';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -12,9 +12,12 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import MessageIcon from '@mui/icons-material/Message';
 import company from '@/lib/data/company.json';
-import products from '@/lib/data/products.json';
-import catalog from '@/lib/data/catalog.json';
 import ProductDialog from '@/components/ProductDialog';
+
+interface Product { id: number; name: string; description: string; price?: string; currency?: string; image_url?: string; }
+interface CatalogItem { id: number; name: string; description: string; price?: string; currency?: string; image_url?: string; }
+interface CatalogCategory { id: number; name: string; slug: string; items: CatalogItem[]; }
+interface AboutContent { heading: string; description: string; mission: string; image_url?: string; }
 
 export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -23,759 +26,241 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const carouselImages = [
-    '/images/ss1.jpeg',
-    '/images/ss2.jpeg',
-    '/images/ss3.jpeg',
-    '/images/ss4.jpeg',
-    '/images/ss5.jpeg',
-    '/images/ss6.jpeg',
-    '/images/ss7.jpeg',
-    '/images/ss8.jpeg',
-    '/images/ss9.jpeg',
-    '/images/ss10.jpeg',
-  ];
+  const [about, setAbout] = useState<AboutContent>({ heading: 'About Seven SS Stars Solar', description: company.description, mission: '', image_url: '/images/abt.png' });
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<CatalogCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const carouselImages = ['/images/ss1.jpeg','/images/ss2.jpeg','/images/ss3.jpeg','/images/ss4.jpeg','/images/ss5.jpeg','/images/ss6.jpeg','/images/ss7.jpeg','/images/ss8.jpeg','/images/ss9.jpeg','/images/ss10.jpeg'];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
-    }, 3000);
+    const interval = setInterval(() => setCurrentImageIndex(p => (p + 1) % carouselImages.length), 3000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleProductClick = (product: any) => {
-    setSelectedProduct(product);
-    setDialogOpen(true);
-  };
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/about').then(r => r.json()),
+      fetch('/api/products').then(r => r.json()),
+      fetch('/api/catalog/categories').then(r => r.json()),
+    ]).then(([a, p, c]) => {
+      if (a && a.heading) setAbout(a);
+      if (Array.isArray(p)) setProducts(p);
+      if (Array.isArray(c)) setCategories(c);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
 
-  const openWhatsApp = (phone: string) => {
-    const kenyaPhone = `254${phone.substring(1)}`;
-    window.open(`https://wa.me/${kenyaPhone}`, '_blank');
-  };
+  const handleProductClick = (product: any) => { setSelectedProduct(product); setDialogOpen(true); };
+  const openWhatsApp = (phone: string) => window.open(`https://wa.me/254${phone.substring(1)}`, '_blank');
 
-  const filteredProducts = selectedCategory === 'all'
-    ? catalog.categories.flatMap(cat => cat.products)
-    : catalog.categories.find(cat => cat.id === selectedCategory)?.products || [];
-
-  const searchedProducts = filteredProducts.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const allItems = categories.flatMap(cat => cat.items.map(i => ({ ...i, categoryId: cat.id })));
+  const filteredItems = selectedCategory === 'all' ? allItems : allItems.filter(i => i.categoryId === Number(selectedCategory));
+  const searchedItems = filteredItems.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-      }}
-    >
-      {/* Background Image with Overlay */}
-      <Box
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: 'url(/images/ss1.jpeg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          zIndex: -2,
-        }}
-      />
-      <Box
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(255, 255, 255, 0.85)',
-          zIndex: -1,
-        }}
-      />
+    <Box sx={{ position: 'relative' }}>
+      <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: 'url(/images/ss1.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', zIndex: -2 }} />
+      <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255,255,255,0.87)', zIndex: -1 }} />
 
-      {/* Home Section */}
+      {/* HOME */}
       <Box id="home">
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
             <Container maxWidth="lg">
-              <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
-                {company.name}
-              </Typography>
-              <Typography variant="h6" sx={{ mb: 4 }}>
-                {company.slogan}
-              </Typography>
-              <Typography variant="body1" sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>
-                {company.tagline}
-              </Typography>
+              <Box sx={{ mb: 4 }}><img src="/images/logo.png" alt="Logo" style={{ height: 120, width: 'auto' }} /></Box>
+              <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>{company.name}</Typography>
+              <Typography variant="h6" sx={{ mb: 4 }}>{company.slogan}</Typography>
+              <Typography variant="body1" sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>{company.tagline}</Typography>
             </Container>
           </Box>
         </motion.div>
 
         {/* Carousel */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Box sx={{ py: 8, bgcolor: 'gray.50' }}>
-            <Container maxWidth="lg">
-              <Box
-                sx={{
-                  position: 'relative',
-                  height: 400,
-                  overflow: 'hidden',
-                  borderRadius: 2,
-                  bgcolor: 'gray.200',
-                }}
-              >
-                <motion.img
-                  key={currentImageIndex}
-                  src={carouselImages[currentImageIndex]}
-                  alt="Carousel"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
-              </Box>
-            </Container>
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }}>
+          <Box sx={{ position: 'relative', height: 500, overflow: 'hidden' }}>
+            <motion.img key={currentImageIndex} src={carouselImages[currentImageIndex]} alt="Carousel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)' }} />
+            <Box sx={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 1.5, zIndex: 1 }}>
+              {carouselImages.map((_, i) => (
+                <Box key={i} onClick={() => setCurrentImageIndex(i)} sx={{ width: i === currentImageIndex ? 32 : 10, height: 10, borderRadius: 5, bgcolor: i === currentImageIndex ? 'white' : 'rgba(255,255,255,0.5)', cursor: 'pointer', transition: 'all 0.3s' }} />
+              ))}
+            </Box>
           </Box>
         </motion.div>
+      </Box>
 
-        {/* About Snippet */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <Box sx={{ py: 12 }}>
+      {/* ABOUT SECTION */}
+      <Box id="about" sx={{ py: 12 }}>
+        <motion.div initial={{ opacity: 0, y: -20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 10, textAlign: 'center' }}>
             <Container maxWidth="lg">
-              <Typography variant="h4" sx={{ color: 'primary.main', mb: 4, fontWeight: 'bold', textAlign: 'center' }}>
-                About Us
-              </Typography>
-              <Typography variant="body1" sx={{ textAlign: 'center', maxWidth: 800, mx: 'auto', mb: 8 }}>
-                {company.about}
-              </Typography>
+              <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>About Us</Typography>
+              <Typography variant="h6">{company.name}</Typography>
             </Container>
           </Box>
         </motion.div>
+        <Container maxWidth="lg" sx={{ py: 10 }}>
+          <Grid container spacing={6} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Box sx={{ height: 420, borderRadius: 3, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
+                <img src={about.image_url || '/images/abt.png'} alt="About" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 3 }}>{about.heading || `About ${company.name}`}</Typography>
+              <Typography variant="body1" sx={{ lineHeight: 1.9, color: 'text.secondary', mb: 3 }}>{about.description || company.description}</Typography>
+              {about.mission && (
+                <Box sx={{ p: 3, bgcolor: 'rgba(89,182,61,0.06)', borderLeft: '4px solid', borderColor: 'primary.main', borderRadius: 1 }}>
+                  <Typography variant="subtitle2" sx={{ color: 'primary.main', fontWeight: 700, mb: 1, textTransform: 'uppercase', letterSpacing: 1 }}>Our Mission</Typography>
+                  <Typography variant="body1" sx={{ lineHeight: 1.8, color: 'text.secondary' }}>{about.mission}</Typography>
+                </Box>
+              )}
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+    
 
         {/* Featured Products */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <Box sx={{ py: 12, bgcolor: 'gray.50' }}>
-            <Container maxWidth="lg">
-              <Typography variant="h4" sx={{ color: 'primary.main', mb: 6, fontWeight: 'bold', textAlign: 'center' }}>
-                Our Products
-              </Typography>
-              <Grid container spacing={4}>
-                {products.featured.map((product, index) => (
-                  <Grid item xs={12} sm={6} md={4} key={product.id}>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                    >
-                      <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)', cursor: 'pointer' } }} onClick={() => handleProductClick(product)}>
-                        <Box sx={{ height: 300, overflow: 'hidden' }}>
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          />
-                        </Box>
-                        <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                          <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                            {product.name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {product.description}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
+        <Box id="products">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+            <Box sx={{ py: 10, bgcolor: 'rgba(249,250,251,0.9)' }}>
+              <Container maxWidth="lg">
+                <Typography variant="h4" sx={{ color: 'primary.main', mb: 6, fontWeight: 'bold', textAlign: 'center' }}>Our Products</Typography>
+                {loading ? <Typography textAlign="center" color="text.secondary">Loading…</Typography> : (
+                  <Grid container spacing={4}>
+                    {products.map((product, i) => (
+                      <Grid item xs={12} sm={6} md={4} key={product.id}>
+                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }}>
+                          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 3, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', transition: 'all 0.3s', '&:hover': { transform: 'translateY(-6px)', boxShadow: '0 12px 32px rgba(0,0,0,0.15)', cursor: 'pointer' } }} onClick={() => handleProductClick({ ...product, image: product.image_url })}>
+                            <Box sx={{ height: 260, overflow: 'hidden', bgcolor: '#f1f5f9' }}>
+                              {product.image_url
+                                ? <img src={product.image_url} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 64 }}>📦</Box>
+                              }
+                            </Box>
+                            <CardContent sx={{ flexGrow: 1, textAlign: 'center', p: 3 }}>
+                              <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 1 }}>{product.name}</Typography>
+                              <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{product.description}</Typography>
+                              {product.price && <Typography variant="h6" sx={{ color: '#059669', fontWeight: 800 }}>{product.currency} {Number(product.price).toLocaleString()}</Typography>}
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      </Grid>
+                    ))}
                   </Grid>
-                ))}
-              </Grid>
-            </Container>
-          </Box>
-        </motion.div>
-      </Box>
-
-      {/* About Section */}
-      <Box id="about" sx={{ py: 12 }}>
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
-            <Container maxWidth="lg">
-              <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
-                About Us
-              </Typography>
-              <Typography variant="h6">
-                {company.name}
-              </Typography>
-            </Container>
-          </Box>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Container maxWidth="lg" sx={{ py: 12 }}>
-            <Grid container spacing={6} alignItems="center">
-              <Grid item xs={12} md={6}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <Box sx={{ position: 'relative', height: 400, borderRadius: 2, overflow: 'hidden' }}>
-                    <img
-                      src="/images/abt.png"
-                      alt="About Pamutec Solar"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  </Box>
-                </motion.div>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                >
-                  <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 4 }}>
-                    About {company.name}
-                  </Typography>
-                  <Typography variant="body1" sx={{ lineHeight: 1.8, color: 'text.secondary', mb: 4 }}>
-                    {company.description}
-                  </Typography>
-                  <Typography variant="body1" sx={{ lineHeight: 1.8, color: 'text.secondary' }}>
-                    {company.about}
-                  </Typography>
-                </motion.div>
-              </Grid>
-            </Grid>
-          </Container>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <Box sx={{ py: 12 }}>
-            <Container maxWidth="lg">
-              <Typography variant="h4" sx={{ color: 'primary.main', mb: 6, fontWeight: 'bold', textAlign: 'center' }}>
-                Our Mission
-              </Typography>
-              <Typography variant="body1" sx={{ textAlign: 'center', maxWidth: 800, mx: 'auto', lineHeight: 1.8, color: 'text.secondary' }}>
-                We are committed to providing clean, reliable, and affordable solar energy solutions for homes and businesses around the world. Our products are designed with quality and sustainability in mind, ensuring that our customers receive the best value for their investment.
-              </Typography>
-            </Container>
-          </Box>
-        </motion.div>
-      </Box>
-
-      {/* Products Section */}
-      <Box id="products" sx={{ py: 12, bgcolor: 'gray.50' }}>
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
-            <Container maxWidth="lg">
-              <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Our Products
-              </Typography>
-              <Typography variant="h6">
-                Quality Solar Solutions for Every Need
-              </Typography>
-            </Container>
-          </Box>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Container maxWidth="lg" sx={{ py: 12 }}>
-            <Grid container spacing={4}>
-              {products.featured.map((product, index) => (
-                <Grid item xs={12} sm={6} md={4} key={product.id}>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                  >
-                    <Card
-                      sx={{ height: '100%', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)', cursor: 'pointer' } }}
-                      onClick={() => handleProductClick(product)}
-                    >
-                      <Box sx={{ height: 350, overflow: 'hidden' }}>
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      </Box>
-                      <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                        <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                          {product.name}
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                          {product.description}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-        </motion.div>
-      </Box>
-
-      {/* Catalog Section */}
-      <Box id="catalog" sx={{ py: 12 }}>
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
-            <Container maxWidth="lg">
-              <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Product Catalog
-              </Typography>
-              <Typography variant="h6">
-                Browse Our Complete Product Range
-              </Typography>
-            </Container>
-          </Box>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Container maxWidth="lg" sx={{ py: 6 }}>
-            <Box sx={{ mb: 4 }}>
-              <TextField
-                fullWidth
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                  startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
-                }}
-                sx={{ mb: 3 }}
-              />
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                <Chip
-                  label="All Categories"
-                  onClick={() => setSelectedCategory('all')}
-                  color={selectedCategory === 'all' ? 'primary' : 'default'}
-                  clickable
-                />
-                {catalog.categories.map((category) => (
-                  <Chip
-                    key={category.id}
-                    label={category.name}
-                    onClick={() => setSelectedCategory(category.id)}
-                    color={selectedCategory === category.id ? 'primary' : 'default'}
-                    clickable
-                  />
-                ))}
-              </Box>
+                )}
+              </Container>
             </Box>
+          </motion.div>
+        </Box>
 
-            {catalog.categories.map((category, catIndex) => (
-              (selectedCategory === 'all' || selectedCategory === category.id) && (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: catIndex * 0.1 }}
-                >
-                  <Box sx={{ mb: 8 }}>
-                    <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 4 }}>
-                      {category.name}
-                    </Typography>
-                    <Grid container spacing={3}>
-                      {category.products
-                        .filter(product =>
-                          product.name.toLowerCase().includes(searchQuery.toLowerCase())
-                        )
-                        .map((product, prodIndex) => (
-                        <Grid item xs={12} sm={6} md={4} key={product.id}>
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.4, delay: prodIndex * 0.05 }}
-                          >
-                            <Card
-                              sx={{ height: '100%', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)', cursor: 'pointer' } }}
-                              onClick={() => handleProductClick(product)}
-                            >
-                              <Box sx={{ height: 250, overflow: 'hidden' }}>
-                                <img
-                                  src={product.image}
-                                  alt={product.name}
-                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
-                              </Box>
-                            </Card>
-                          </motion.div>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </Box>
-                </motion.div>
-              )
-            ))}
+    
 
-            {searchedProducts.length === 0 && (
-              <Box sx={{ textAlign: 'center', py: 8 }}>
-                <Typography variant="h6" color="text.secondary">
-                  No products found matching your search.
-                </Typography>
-              </Box>
-            )}
-          </Container>
-        </motion.div>
-      </Box>
-
-      {/* Prices Section */}
-      <Box id="prices" sx={{ py: 12, bgcolor: 'gray.50' }}>
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
+   
+      {/* CATALOG SECTION */}
+      <Box id="catalog" sx={{ py: 12 }}>
+        <motion.div initial={{ opacity: 0, y: -20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 10, textAlign: 'center' }}>
             <Container maxWidth="lg">
-              <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Pricing
-              </Typography>
-              <Typography variant="h6">
-                Competitive Prices for Quality Solar Solutions
-              </Typography>
+              <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2 }}>Product Catalog</Typography>
+              <Typography variant="h6">Browse Our Complete Product Range</Typography>
             </Container>
           </Box>
         </motion.div>
+        <Container maxWidth="lg" sx={{ py: 8 }}>
+          <Box sx={{ mb: 5 }}>
+            <TextField fullWidth placeholder="Search products…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} InputProps={{ startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} /> }} sx={{ mb: 3 }} />
+            <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+              <Chip label="All Categories" onClick={() => setSelectedCategory('all')} color={selectedCategory === 'all' ? 'primary' : 'default'} clickable />
+              {categories.map(cat => (
+                <Chip key={cat.id} label={cat.name} onClick={() => setSelectedCategory(String(cat.id))} color={selectedCategory === String(cat.id) ? 'primary' : 'default'} clickable />
+              ))}
+            </Box>
+          </Box>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Container maxWidth="lg" sx={{ py: 12 }}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <img
-                  src="/images/prices.png"
-                  alt="Pricing Information"
-                  style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }}
-                />
-              </Box>
-            </motion.div>
-            <Typography variant="body1" sx={{ textAlign: 'center', mt: 4, color: 'text.secondary' }}>
-              For detailed pricing information and quotes, please contact us directly. We offer competitive prices for all our solar energy solutions.
-            </Typography>
-          </Container>
-        </motion.div>
+          {categories.map((cat, ci) => {
+            const items = cat.items.filter(i => (selectedCategory === 'all' || selectedCategory === String(cat.id)) && i.name.toLowerCase().includes(searchQuery.toLowerCase()));
+            if (items.length === 0 && selectedCategory !== 'all') return null;
+            if (items.length === 0 && selectedCategory === 'all' && searchQuery) return null;
+            return (
+              <motion.div key={cat.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }}>
+                <Box sx={{ mb: 8 }}>
+                  <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 4, pb: 2, borderBottom: '2px solid', borderColor: 'primary.main' }}>{cat.name}</Typography>
+                  <Grid container spacing={3}>
+                    {items.map((item, ii) => (
+                      <Grid item xs={12} sm={6} md={4} key={item.id}>
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: ii * 0.05 }}>
+                          <Card sx={{ height: '100%', borderRadius: 3, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', transition: 'all 0.3s', '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 32px rgba(0,0,0,0.13)', cursor: 'pointer' } }} onClick={() => handleProductClick({ ...item, image: item.image_url })}>
+                            <Box sx={{ height: 220, overflow: 'hidden', bgcolor: '#f1f5f9' }}>
+                              {item.image_url ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🖼️</Box>}
+                            </Box>
+                            <CardContent sx={{ p: 2.5 }}>
+                              <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>{item.name}</Typography>
+                              {item.description && <Typography variant="body2" color="text.secondary" sx={{ mb: 1, lineHeight: 1.6 }}>{item.description}</Typography>}
+                              {item.price && <Typography variant="subtitle1" sx={{ color: '#059669', fontWeight: 800 }}>{item.currency} {Number(item.price).toLocaleString()}</Typography>}
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              </motion.div>
+            );
+          })}
+
+          {searchedItems.length === 0 && searchQuery && (
+            <Box sx={{ textAlign: 'center', py: 10 }}>
+              <Typography variant="h6" color="text.secondary">No products found for "{searchQuery}"</Typography>
+            </Box>
+          )}
+        </Container>
       </Box>
 
-      {/* Contact Section */}
+     
+
+      {/* CONTACT SECTION */}
       <Box id="contact" sx={{ py: 12 }}>
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
+        <motion.div initial={{ opacity: 0, y: -20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 10, textAlign: 'center' }}>
             <Container maxWidth="lg">
-              <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Contact Us
-              </Typography>
-              <Typography variant="h6">
-                Get in Touch with Pamutec Solar
-              </Typography>
+              <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2 }}>Contact Us</Typography>
+              <Typography variant="h6">Get in Touch with Seven SS Stars Solar</Typography>
             </Container>
           </Box>
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Container maxWidth="lg" sx={{ py: 12 }}>
-            <Grid container spacing={4}>
-              <Grid item xs={12} sm={6} md={3}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Card sx={{ height: '100%', textAlign: 'center', p: 4, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
+        <Container maxWidth="lg" sx={{ py: 10 }}>
+          <Grid container spacing={4}>
+            {[
+              { icon: <PhoneIcon sx={{ fontSize: 48, color: 'primary.main' }} />, title: 'Call Us', content: <><Typography>0720055705</Typography><Typography>0728167435</Typography></>, btn: <Button variant="contained" color="primary" href="tel:0720055705" fullWidth>Call Now</Button> },
+              { icon: <WhatsAppIcon sx={{ fontSize: 48, color: '#25D366' }} />, title: 'WhatsApp', content: <><Typography>0720055705</Typography><Typography>0728167435</Typography></>, btn: <Button variant="contained" onClick={() => openWhatsApp('0720055705')} fullWidth sx={{ bgcolor: '#25D366', '&:hover': { bgcolor: '#128C7E' } }}>Chat on WhatsApp</Button> },
+              { icon: <EmailIcon sx={{ fontSize: 48, color: 'primary.main' }} />, title: 'Email', content: <Typography>pamutecsolar@gmail.com</Typography>, btn: <Button variant="contained" color="primary" href="mailto:pamutecsolar@gmail.com" fullWidth>Send Email</Button> },
+              { icon: <InstagramIcon sx={{ fontSize: 48, color: '#E1306C' }} />, title: 'Instagram', content: <Typography>@pamutecsolarkenya</Typography>, btn: <Button variant="contained" href="https://www.instagram.com/pamutecsolarkenya" target="_blank" fullWidth sx={{ bgcolor: '#E1306C', '&:hover': { bgcolor: '#C13584' } }}>Follow Us</Button> },
+              { icon: <FacebookIcon sx={{ fontSize: 48, color: '#1877F2' }} />, title: 'Facebook', content: <Typography>Seven SS Stars Solar</Typography>, btn: <Button variant="contained" href="https://www.facebook.com/pamutecSolarKenya/" target="_blank" fullWidth sx={{ bgcolor: '#1877F2', '&:hover': { bgcolor: '#0d5bbd' } }}>Like Page</Button> },
+              { icon: <MessageIcon sx={{ fontSize: 48, color: '#00B2FF' }} />, title: 'Messenger', content: <Typography>Chat with us</Typography>, btn: <Button variant="contained" href="https://m.me/pamutecSolarKenya" target="_blank" fullWidth sx={{ bgcolor: '#00B2FF', '&:hover': { bgcolor: '#0084cc' } }}>Message Us</Button> },
+              { icon: <LocationOnIcon sx={{ fontSize: 48, color: 'primary.main' }} />, title: 'Location', content: <Typography>Nairobi, Kenya</Typography>, btn: <Button variant="outlined" color="primary" href="https://www.google.com/maps/place/Atlantis+Business+Park" target="_blank" fullWidth>Get Directions</Button> },
+            ].map((c, i) => (
+              <Grid item xs={12} sm={6} md={3} key={i}>
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}>
+                  <Card sx={{ height: '100%', textAlign: 'center', p: 3, borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.07)', transition: 'all 0.3s', '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 32px rgba(0,0,0,0.13)' } }}>
                     <CardContent>
-                      <PhoneIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
-                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                        Call Us
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 1 }}>
-                        0720055705
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 3 }}>
-                        0728167435
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        href="tel:0720055705"
-                        sx={{ mb: 1, width: '100%' }}
-                      >
-                        Call Now
-                      </Button>
+                      {c.icon}
+                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', my: 2 }}>{c.title}</Typography>
+                      <Box sx={{ mb: 3 }}>{c.content}</Box>
+                      {c.btn}
                     </CardContent>
                   </Card>
                 </motion.div>
               </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
-                >
-                  <Card sx={{ height: '100%', textAlign: 'center', p: 4, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
-                    <CardContent>
-                      <WhatsAppIcon sx={{ fontSize: 48, color: '#25D366', mb: 2 }} />
-                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                        WhatsApp
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 1 }}>
-                        0720055705
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 3 }}>
-                        0728167435
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        onClick={() => openWhatsApp('0720055705')}
-                        sx={{ mb: 1, width: '100%', bgcolor: '#25D366', '&:hover': { bgcolor: '#128C7E' } }}
-                      >
-                        Chat on WhatsApp
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
-                >
-                  <Card sx={{ height: '100%', textAlign: 'center', p: 4, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
-                    <CardContent>
-                      <EmailIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
-                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                        Email
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 3 }}>
-                        pamutecsolar@gmail.com
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        href="mailto:pamutecsolar@gmail.com"
-                        sx={{ width: '100%' }}
-                      >
-                        Send Email
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.4 }}
-                >
-                  <Card sx={{ height: '100%', textAlign: 'center', p: 4, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
-                    <CardContent>
-                      <InstagramIcon sx={{ fontSize: 48, color: '#E1306C', mb: 2 }} />
-                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                        Instagram
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 3 }}>
-                        @pamutecsolarkenya
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        href="https://www.instagram.com/pamutecsolarkenya"
-                        target="_blank"
-                        sx={{ width: '100%', bgcolor: '#E1306C', '&:hover': { bgcolor: '#C13584' } }}
-                      >
-                        Follow Us
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.5 }}
-                >
-                  <Card sx={{ height: '100%', textAlign: 'center', p: 4, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
-                    <CardContent>
-                      <FacebookIcon sx={{ fontSize: 48, color: '#1877F2', mb: 2 }} />
-                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                        Facebook
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 3 }}>
-                        Pamutec Solar Kenya
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        href="https://www.facebook.com/PamutecSolarKenya/"
-                        target="_blank"
-                        sx={{ width: '100%', bgcolor: '#1877F2', '&:hover': { bgcolor: '#0d5bbd' } }}
-                      >
-                        Like Page
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.6 }}
-                >
-                  <Card sx={{ height: '100%', textAlign: 'center', p: 4, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
-                    <CardContent>
-                      <MessageIcon sx={{ fontSize: 48, color: '#00B2FF', mb: 2 }} />
-                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                        Messenger
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 3 }}>
-                        Chat with us
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        href="https://m.me/PamutecSolarKenya"
-                        target="_blank"
-                        sx={{ width: '100%', bgcolor: '#00B2FF', '&:hover': { bgcolor: '#0084cc' } }}
-                      >
-                        Message Us
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: 0.3 }}
-                >
-                  <Card sx={{ height: '100%', textAlign: 'center', p: 4, transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)' } }}>
-                    <CardContent>
-                      <LocationOnIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
-                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                        Location
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 3 }}>
-                        Nairobi, Kenya
-                      </Typography>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        href="https://www.google.com/maps/place/Atlantis+Business+Park/@-1.3430387,36.8794513,17z/data=!4m14!1m7!3m6!1s0x182f0df6dd2d8809:0x8ae8ff2732fb1eab!2sAtlantis+Business+Park!8m2!3d-1.3430441!4d36.8820262!16s%2Fg%2F11ggsz8s3p!3m5!1s0x182f0df6dd2d8809:0x8ae8ff2732fb1eab!8m2!3d-1.3430441!4d36.8820262!16s%2Fg%2F11ggsz8s3p?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D"
-                        target="_blank"
-                        sx={{ width: '100%' }}
-                      >
-                        Get Directions
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-            </Grid>
-          </Container>
-        </motion.div>
+            ))}
+          </Grid>
+        </Container>
       </Box>
 
-      <ProductDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        product={selectedProduct}
-      />
+      <ProductDialog open={dialogOpen} onClose={() => setDialogOpen(false)} product={selectedProduct} />
     </Box>
   );
 }

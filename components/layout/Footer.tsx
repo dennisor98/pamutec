@@ -71,14 +71,14 @@ export default function Footer() {
                 <InstagramIcon />
               </IconButton>
               <IconButton
-                href="https://www.facebook.com/PamutecSolarKenya/"
+                href="https://www.facebook.com/pamutecSolarKenya/"
                 target="_blank"
                 sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
               >
                 <FacebookIcon />
               </IconButton>
               <IconButton
-                href="https://m.me/PamutecSolarKenya"
+                href="https://m.me/pamutecSolarKenya"
                 target="_blank"
                 sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
               >

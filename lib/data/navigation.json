@@ -4,7 +4,6 @@
     { "label": "About Us", "href": "#about" },
     { "label": "Our Products", "href": "#products" },
     { "label": "Catalog", "href": "#catalog" },
-    { "label": "Prices", "href": "#prices" },
     { "label": "Contact", "href": "#contact" }
   ],
   "footerNav": [
