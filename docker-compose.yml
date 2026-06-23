@@ -7,10 +7,10 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: sevenss
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: sevenss_user
+      POSTGRES_PASSWORD: sevenss@GBR5
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/migrate.sql:/docker-entrypoint-initdb.d/01-migrate.sql

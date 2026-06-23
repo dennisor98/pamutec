@@ -1,0 +1,40 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+
+            echo ">>> Pulling latest changes..."
+            cd ${{ secrets.PROJECT_DIR }}
+            git pull https://${{ secrets.GH_ACCESS_TOKEN }}@github.com/${{ secrets.GH_REPO }}.git main
+
+            echo ">>> Installing dependencies..."
+            npm install
+
+            echo ">>> Building project..."
+            npm run build
+
+            echo ">>> Moving build to serving directory..."
+            rm -rf ${{ secrets.BUILD_DEST }}/*
+            cp -r build/* ${{ secrets.BUILD_DEST }}/
+
+            echo ">>> Restarting PM2 process..."
+            pm2 restart ${{ secrets.PM2_APP_NAME }}
+
+            echo ">>> Deployment complete!"
