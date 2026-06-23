@@ -66,8 +66,12 @@ export async function POST(req: NextRequest) {
 
       if (result.rows.length > 0) {
         const user = result.rows[0];
-        if (!checkPassword(password, user.password_hash)) {
-          console.log('[Auth] Password check failed');
+        console.log('[Auth] User found:', user.username);
+        console.log('[Auth] Password hash exists:', !!user.password_hash);
+        console.log('[Auth] Password hash length:', user.password_hash?.length);
+        const passwordMatch = checkPassword(password, user.password_hash);
+        console.log('[Auth] Password match result:', passwordMatch);
+        if (!passwordMatch) {
           return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
         const token = signToken({ username: user.username, role: user.role });

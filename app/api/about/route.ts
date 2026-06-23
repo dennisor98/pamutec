@@ -13,11 +13,14 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
+  console.log('[About API] PUT request received');
   const admin = requireAdmin(req);
+  console.log('[About API] Admin check:', !!admin);
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
     const { heading, description, mission, image_url } = await req.json();
+    console.log('[About API] Updating about content');
 
     const existing = await query('SELECT id FROM about_content ORDER BY id DESC LIMIT 1');
 
@@ -36,7 +39,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json(result.rows[0]);
     }
   } catch (err) {
-    console.error(err);
+    console.error('[About API] Error:', err);
     return NextResponse.json({ error: 'Failed to update about content' }, { status: 500 });
   }
 }
