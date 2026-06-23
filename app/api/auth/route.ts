@@ -48,6 +48,10 @@ export async function POST(req: NextRequest) {
     }
 
     const query = await getDbQuery();
+    console.log('[Auth] DB query available:', !!query);
+    console.log('[Auth] DATABASE_URL set:', !!process.env.DATABASE_URL);
+    console.log('[Auth] JWT_SECRET set:', !!process.env.JWT_SECRET);
+    console.log('[Auth] Attempting login for username:', username);
 
     // ── DB path ──────────────────────────────────────────────────────────────
     if (query) {
@@ -58,12 +62,16 @@ export async function POST(req: NextRequest) {
         [username]
       );
 
+      console.log('[Auth] DB user found:', result.rows.length > 0);
+
       if (result.rows.length > 0) {
         const user = result.rows[0];
         if (!checkPassword(password, user.password_hash)) {
+          console.log('[Auth] Password check failed');
           return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
         const token = signToken({ username: user.username, role: user.role });
+        console.log('[Auth] Token signed successfully');
         const response = NextResponse.json({ success: true, username: user.username, role: user.role });
         response.cookies.set('admin_token', token, {
           httpOnly: true,
@@ -77,6 +85,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Env fallback (works even without DB) ─────────────────────────────────
+    console.log('[Auth] Falling back to env variables');
     const envUsername = process.env.ADMIN_USERNAME || 'admin';
     const envPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
@@ -96,7 +105,7 @@ export async function POST(req: NextRequest) {
     return response;
 
   } catch (err) {
-    console.error('Auth error:', err);
+    console.error('[Auth] Server error:', err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
