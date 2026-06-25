@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://pamutec.tbricks.co.ke'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sevenssstarskenya.co.ke'
 
   return [
     {
@@ -20,6 +20,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+     {
+      url: `${baseUrl}/products`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.7,
+    },
+     {
+      url: `${baseUrl}/catalog`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
       priority: 0.7,
     },
   ]
