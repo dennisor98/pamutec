@@ -40,12 +40,15 @@ export async function uploadFile(
   await minioClient.putObject(BUCKET, objectName, buffer, buffer.length, {
     'Content-Type': contentType,
   });
-  const minioUrl = `${process.env.MINIO_USE_SSL === 'true' ? 'https' : 'http'}://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${BUCKET}/${objectName}`;
+  // Use external URL for serving images
+  const externalUrl = process.env.MINIO_EXTERNAL_URL || 'https://file-server.tbricks.co.ke';
+  const minioUrl = `${externalUrl}/${BUCKET}/${objectName}`;
   return minioUrl;
 }
 
 export async function deleteFile(url: string) {
   try {
+    // Extract object name from URL regardless of the domain
     const objectName = url.split(`/${BUCKET}/`)[1];
     if (objectName) {
       await minioClient.removeObject(BUCKET, objectName);
