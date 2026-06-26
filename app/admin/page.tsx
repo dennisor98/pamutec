@@ -371,7 +371,7 @@ export default function AdminPage() {
               <div>
                 <h3 style={styles.cardTitle}>All Products ({products.length})</h3>
                 {products.length === 0 && <div style={styles.emptyState}>No products yet. Add one →</div>}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ maxHeight: 500, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, paddingRight: 8 }}>
                   {products.map(p => (
                     <div key={p.id} style={styles.listItem}>
                       {p.image_url && <img src={p.image_url} alt={p.name} style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }} />}
@@ -461,7 +461,7 @@ export default function AdminPage() {
                       </div>
 
                       {/* Items list */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div style={{ maxHeight: 500, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, paddingRight: 8 }}>
                         {selectedCat.items.length === 0 && <div style={styles.emptyState}>No items in this category yet.</div>}
                         {selectedCat.items.map(item => (
                           <div key={item.id} style={styles.listItem}>
