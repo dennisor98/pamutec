@@ -1,4 +1,5 @@
 import * as Minio from 'minio';
+import { randomUUID } from 'crypto';
 
 const minioClient = new Minio.Client({
   endPoint: process.env.MINIO_ENDPOINT || 'localhost',
@@ -36,7 +37,7 @@ export async function uploadFile(
   contentType: string
 ): Promise<string> {
   await ensureBucket();
-  const objectName = `${Date.now()}-${filename}`;
+  const objectName = `${randomUUID()}`;
   await minioClient.putObject(BUCKET, objectName, buffer, buffer.length, {
     'Content-Type': contentType,
   });
