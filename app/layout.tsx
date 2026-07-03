@@ -41,13 +41,6 @@ export const metadata: Metadata = {
     images: ['/images/ss1.jpeg'],
     creator: '@pamutecsolarkenya',
   },
-  instagram: {
-    card: 'summary_large_image',
-    title: 'Seven SS Stars Solar - Solar Water Heaters & Solar Panels in Kenya',
-    description: 'Seven SS Stars Solar is the leading provider of solar water heaters, solar panels, and solar energy solutions in Kenya. Quality products at competitive prices.',
-    images: ['/images/ss1.jpeg'],
-    creator: '@pamutecsolarkenya',
-  },
   robots: {
     index: true,
     follow: true,
