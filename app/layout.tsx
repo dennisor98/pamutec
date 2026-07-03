@@ -8,7 +8,7 @@ import FloatingButtons from '@/components/layout/FloatingButtons';
 export const metadata: Metadata = {
   title: 'Seven SS Stars Solar - Solar Water Heaters & Solar Panels in Kenya',
   description: 'Seven SS Stars Solar is the leading provider of solar water heaters, solar panels, and solar energy solutions in Kenya. Quality products at competitive prices.',
-  keywords: 'solar panels, solar water heater, solar, SevenSS Solar, SevenSSStars Solar, solar energy, solar installation, Kenya solar, solar water heating, thermal solar',
+  keywords: 'solar panels,sevenss,sevenss stars,sevenss stars solar, solar water heater, solar, SevenSS Solar, SevenSSStars Solar, solar energy, solar installation, Kenya solar, solar water heating, thermal solar',
   authors: [{ name: 'Seven SS Stars Solar' }],
   creator: 'Seven SS Stars Solar',
   publisher: 'Seven SS Stars Solar',
@@ -17,11 +17,11 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://pamutecsolar.com'),
+  metadataBase: new URL('https://sevenssstarskenya.co.ke'),
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://pamutecsolar.com',
+    url: 'https://sevenssstarskenya.co.ke',
     title: 'Seven SS Stars Solar - Solar Water Heaters & Solar Panels in Kenya',
     description: 'Seven SS Stars Solar is the leading provider of solar water heaters, solar panels, and solar energy solutions in Kenya. Quality products at competitive prices.',
     siteName: 'Seven SS Stars Solar',
@@ -41,6 +41,13 @@ export const metadata: Metadata = {
     images: ['/images/ss1.jpeg'],
     creator: '@pamutecsolarkenya',
   },
+  instagram: {
+    card: 'summary_large_image',
+    title: 'Seven SS Stars Solar - Solar Water Heaters & Solar Panels in Kenya',
+    description: 'Seven SS Stars Solar is the leading provider of solar water heaters, solar panels, and solar energy solutions in Kenya. Quality products at competitive prices.',
+    images: ['/images/ss1.jpeg'],
+    creator: '@pamutecsolarkenya',
+  },
   robots: {
     index: true,
     follow: true,
@@ -53,7 +60,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'your-google-verification-code',
+    google: 'xYONje5Dqc_GPg2Cu16ZUHL5mL9dmlCmcX7KUCvwaz4',
   },
 };
 
