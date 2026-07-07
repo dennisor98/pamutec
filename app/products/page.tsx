@@ -1,89 +1,58 @@
-'use client';
-
-import { useState } from 'react';
-import { Box, Container, Typography, Grid, Card, CardMedia, CardContent } from '@mui/material';
-import { motion } from 'framer-motion';
+import type { Metadata } from 'next';
+import Script from 'next/script';
+import ProductsPageClient from './ProductsPageClient';
 import products from '@/lib/data/products.json';
-import ProductDialog from '@/components/ProductDialog';
+
+const SITE_URL = 'https://sevenssstarskenya.co.ke';
+
+export const metadata: Metadata = {
+  title: 'Our Products | Seven SS Stars Solar',
+  description:
+    'Browse solar water heaters, solar panels, gel and lithium batteries, and solar lighting from Seven SS Stars Solar, Kenya.',
+  alternates: { canonical: '/products' },
+  openGraph: {
+    title: 'Our Products | Seven SS Stars Solar',
+    description:
+      'Browse solar water heaters, solar panels, gel and lithium batteries, and solar lighting from Seven SS Stars Solar, Kenya.',
+    url: `${SITE_URL}/products`,
+  },
+};
+
+// P1 #7 -- structured data for the product category list, so search
+// engines and AI assistants can enumerate what the business sells without
+// scraping prose. (Full Product schema with price/availability belongs on
+// individual product pages once those exist -- see audit item 2.5,
+// "Limited Product Content".)
+function ProductListJsonLd() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: products.featured.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Product',
+        name: p.name,
+        description: p.description,
+        image: `${SITE_URL}${p.image}`,
+      },
+    })),
+  };
+  return (
+    <Script
+      id="products-jsonld"
+      type="application/ld+json"
+      strategy="beforeInteractive"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
 
 export default function ProductsPage() {
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const handleProductClick = (product: any) => {
-    setSelectedProduct(product);
-    setDialogOpen(true);
-  };
-
   return (
-    <Box>
-      {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
-          <Container maxWidth="lg">
-            <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Our Products
-            </Typography>
-            <Typography variant="h6">
-              Quality Solar Solutions for Every Need
-            </Typography>
-          </Container>
-        </Box>
-      </motion.div>
-
-      {/* Products Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <Container maxWidth="lg" sx={{ py: 12 }}>
-          <Grid container spacing={4}>
-            {products.featured.map((product, index) => (
-              <Grid item xs={12} sm={6} md={4} key={product.id}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                >
-                  <Card
-                    sx={{ height: '100%', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)', cursor: 'pointer' } }}
-                    onClick={() => handleProductClick(product)}
-                  >
-                    <Box sx={{ height: 350, overflow: 'hidden' }}>
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </Box>
-                    <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                      <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 'bold', mb: 2 }}>
-                        {product.name}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        {product.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </motion.div>
-
-      <ProductDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        product={selectedProduct}
-      />
-    </Box>
+    <>
+      <ProductListJsonLd />
+      <ProductsPageClient />
+    </>
   );
 }

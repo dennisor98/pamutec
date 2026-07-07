@@ -1,5 +1,6 @@
 'use client';
 import { Dialog, DialogContent, DialogTitle, IconButton, Box, Typography, Button, Chip } from '@mui/material';
+import Image from 'next/image';
 import CloseIcon from '@mui/icons-material/Close';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { motion } from 'framer-motion';
@@ -32,8 +33,8 @@ export default function ProductDialog({ open, onClose, product }: ProductDialogP
       <DialogContent sx={{ p: 0 }}>
         <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }}>
           {imageUrl && (
-            <Box sx={{ bgcolor: '#f8fafc' }}>
-              <img src={imageUrl} alt={product.name} style={{ width: '100%', maxHeight: 380, objectFit: 'contain', display: 'block' }} />
+            <Box sx={{ bgcolor: '#f8fafc', position: 'relative', height: 380 }}>
+              <Image src={imageUrl} alt={product.name} fill sizes="(max-width: 600px) 100vw, 600px" style={{ objectFit: 'contain' }} />
             </Box>
           )}
           <Box sx={{ p: 3 }}>
@@ -44,7 +45,7 @@ export default function ProductDialog({ open, onClose, product }: ProductDialogP
               <Typography variant="body1" sx={{ lineHeight: 1.8, color: 'text.secondary', mb: 3 }}>{product.description}</Typography>
             )}
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="contained" startIcon={<WhatsAppIcon />} onClick={() => window.open('https://wa.me/254720055705', '_blank')} sx={{ flex: 1, bgcolor: '#25D366', '&:hover': { bgcolor: '#128C7E' } }}>
+              <Button variant="contained" startIcon={<WhatsAppIcon />} onClick={() => window.open('https://wa.me/254720055705', '_blank', 'noopener,noreferrer')} sx={{ flex: 1, bgcolor: '#25D366', '&:hover': { bgcolor: '#128C7E' } }}>
                 Inquire on WhatsApp
               </Button>
               <Button variant="outlined" onClick={onClose} sx={{ flex: 1 }}>Close</Button>

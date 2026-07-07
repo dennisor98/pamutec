@@ -12,7 +12,7 @@ import MessageIcon from '@mui/icons-material/Message';
 export default function Footer() {
   const openWhatsApp = (phone: string) => {
     const kenyaPhone = `254${phone.substring(1)}`;
-    window.open(`https://wa.me/${kenyaPhone}`, '_blank');
+    window.open(`https://wa.me/${kenyaPhone}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -66,6 +66,7 @@ export default function Footer() {
               <IconButton
                 href="https://www.instagram.com/pamutecsolarkenya"
                 target="_blank"
+                rel="noopener noreferrer"
                 sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
               >
                 <InstagramIcon />
@@ -73,6 +74,7 @@ export default function Footer() {
               <IconButton
                 href="https://www.facebook.com/pamutecSolarKenya/"
                 target="_blank"
+                rel="noopener noreferrer"
                 sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
               >
                 <FacebookIcon />
@@ -80,6 +82,7 @@ export default function Footer() {
               <IconButton
                 href="https://m.me/pamutecSolarKenya"
                 target="_blank"
+                rel="noopener noreferrer"
                 sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.1)', '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' } }}
               >
                 <MessageIcon />

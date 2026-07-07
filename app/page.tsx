@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Box, Container, Typography, Grid, Card, CardContent, Button, TextField, Chip } from '@mui/material';
 import { motion } from 'framer-motion';
 import SearchIcon from '@mui/icons-material/Search';
@@ -30,6 +31,11 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<CatalogCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  // P0 #5 -- Product catalog fails to render reliably: previously a failed
+  // fetch silently left `loading=false` with empty arrays and no message,
+  // i.e. a blank section with no indication anything went wrong for users
+  // or crawlers. This flag drives a visible retry state instead.
+  const [loadError, setLoadError] = useState(false);
 
   const carouselImages = ['/images/ss1.jpeg','/images/ss2.jpeg','/images/ss3.jpeg','/images/ss4.jpeg','/images/ss5.jpeg','/images/ss6.jpeg','/images/ss7.jpeg','/images/ss8.jpeg','/images/ss9.jpeg','/images/ss10.jpeg'];
 
@@ -38,21 +44,33 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
+  const loadSiteData = () => {
+    setLoading(true);
+    setLoadError(false);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
     Promise.all([
-      fetch('/api/about').then(r => r.json()),
-      fetch('/api/products').then(r => r.json()),
-      fetch('/api/catalog/categories').then(r => r.json()),
+      fetch('/api/about', { signal: controller.signal }).then(r => r.json()),
+      fetch('/api/products', { signal: controller.signal }).then(r => r.json()),
+      fetch('/api/catalog/categories', { signal: controller.signal }).then(r => r.json()),
     ]).then(([a, p, c]) => {
       if (a && a.heading) setAbout(a);
       if (Array.isArray(p)) setProducts(p);
       if (Array.isArray(c)) setCategories(c);
       setLoading(false);
-    }).catch(() => setLoading(false));
+    }).catch(() => {
+      setLoading(false);
+      setLoadError(true);
+    }).finally(() => clearTimeout(timeout));
+  };
+
+  useEffect(() => {
+    loadSiteData();
   }, []);
 
   const handleProductClick = (product: any) => { setSelectedProduct(product); setDialogOpen(true); };
-  const openWhatsApp = (phone: string) => window.open(`https://wa.me/254${phone.substring(1)}`, '_blank');
+  const openWhatsApp = (phone: string) => window.open(`https://wa.me/254${phone.substring(1)}`, '_blank', 'noopener,noreferrer');
 
   const allItems = categories.flatMap(cat => cat.items.map(i => ({ ...i, categoryId: cat.id })));
   const filteredItems = selectedCategory === 'all' ? allItems : allItems.filter(i => i.categoryId === Number(selectedCategory));
@@ -68,7 +86,9 @@ export default function Home() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
             <Container maxWidth="lg">
-              <Box sx={{ mb: 4 }}><img src="/images/logo.png" alt="Logo" style={{ height: 120, width: 'auto' }} /></Box>
+              <Box sx={{ mb: 4 }}>
+                <Image src="/images/logo.png" alt="Seven SS Stars Solar logo" width={120} height={120} priority unoptimized />
+              </Box>
               <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>{company.name}</Typography>
               <Typography variant="h6" sx={{ mb: 4 }}>{company.slogan}</Typography>
               <Typography variant="body1" sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>{company.tagline}</Typography>
@@ -79,7 +99,12 @@ export default function Home() {
         {/* Carousel */}
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }}>
           <Box sx={{ position: 'relative', height: 500, overflow: 'hidden' }}>
-            <motion.img key={currentImageIndex} src={carouselImages[currentImageIndex]} alt="Carousel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <motion.div key={currentImageIndex} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} style={{ position: 'absolute', inset: 0 }}>
+              {/* priority + fill on the first slide preloads and serves the
+                  Largest Contentful Paint image (was 7.9s LCP against a
+                  raw 50-92KB jpeg with no preload -- audit item 1.1). */}
+              <Image src={carouselImages[currentImageIndex]} alt="Seven SS Stars Solar installations and products" fill sizes="100vw" style={{ objectFit: 'cover' }} priority={currentImageIndex === 0} />
+            </motion.div>
             <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)' }} />
             <Box sx={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 1.5, zIndex: 1 }}>
               {carouselImages.map((_, i) => (
@@ -103,8 +128,8 @@ export default function Home() {
         <Container maxWidth="lg" sx={{ py: 10 }}>
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Box sx={{ height: 420, borderRadius: 3, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
-                <img src={about.image_url || '/images/abt.png'} alt="About" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <Box sx={{ position: 'relative', height: 420, borderRadius: 3, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
+                <Image src={about.image_url || '/images/abt.png'} alt="About Seven SS Stars Solar" fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: 'cover' }} loading="lazy" />
               </Box>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -129,15 +154,34 @@ export default function Home() {
             <Box sx={{ py: 10, bgcolor: 'rgba(249,250,251,0.9)' }}>
               <Container maxWidth="lg">
                 <Typography variant="h4" sx={{ color: 'primary.main', mb: 6, fontWeight: 'bold', textAlign: 'center' }}>Our Products</Typography>
-                {loading ? <Typography textAlign="center" color="text.secondary">Loading…</Typography> : (
+                {loading ? (
+                  <Grid container spacing={4}>
+                    {[1, 2, 3].map((n) => (
+                      <Grid item xs={12} sm={6} md={4} key={n}>
+                        <Box sx={{ height: 260, borderRadius: 3, bgcolor: '#e5e7eb', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                ) : loadError ? (
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <Typography color="text.secondary" sx={{ mb: 2 }}>
+                      We couldn't load the product list just now.
+                    </Typography>
+                    <Button variant="outlined" onClick={loadSiteData}>Try again</Button>
+                  </Box>
+                ) : products.length === 0 ? (
+                  <Typography textAlign="center" color="text.secondary">
+                    Products are being updated -- please check back shortly, or view our full <a href="/catalog">catalog</a>.
+                  </Typography>
+                ) : (
                   <Grid container spacing={4}>
                     {products.map((product, i) => (
                       <Grid item xs={12} sm={6} md={4} key={product.id}>
                         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }}>
                           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 3, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', transition: 'all 0.3s', '&:hover': { transform: 'translateY(-6px)', boxShadow: '0 12px 32px rgba(0,0,0,0.15)', cursor: 'pointer' } }} onClick={() => handleProductClick({ ...product, image: product.image_url })}>
-                            <Box sx={{ height: 260, overflow: 'hidden', bgcolor: '#f1f5f9' }}>
+                            <Box sx={{ height: 260, overflow: 'hidden', bgcolor: '#f1f5f9', position: 'relative' }}>
                               {product.image_url
-                                ? <img src={product.image_url} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ? <Image src={product.image_url} alt={product.name} fill sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} loading="lazy" />
                                 : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 64 }}>📦</Box>
                               }
                             </Box>
@@ -181,6 +225,19 @@ export default function Home() {
             </Box>
           </Box>
 
+          {loadError && (
+            <Box sx={{ textAlign: 'center', py: 4 }}>
+              <Typography color="text.secondary" sx={{ mb: 2 }}>
+                We couldn't load the catalog just now.
+              </Typography>
+              <Button variant="outlined" onClick={loadSiteData}>Try again</Button>
+            </Box>
+          )}
+          {!loading && !loadError && categories.length === 0 && (
+            <Typography textAlign="center" color="text.secondary">
+              Catalog is being updated -- please check back shortly, or <a href="/contact">contact us</a> for current stock.
+            </Typography>
+          )}
           {categories.map((cat, ci) => {
             const items = cat.items.filter(i => (selectedCategory === 'all' || selectedCategory === String(cat.id)) && i.name.toLowerCase().includes(searchQuery.toLowerCase()));
             if (items.length === 0 && selectedCategory !== 'all') return null;
@@ -194,8 +251,8 @@ export default function Home() {
                       <Grid item xs={12} sm={6} md={4} key={item.id}>
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: ii * 0.05 }}>
                           <Card sx={{ height: '100%', borderRadius: 3, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', transition: 'all 0.3s', '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 32px rgba(0,0,0,0.13)', cursor: 'pointer' } }} onClick={() => handleProductClick({ ...item, image: item.image_url })}>
-                            <Box sx={{ height: 220, overflow: 'hidden', bgcolor: '#f1f5f9' }}>
-                              {item.image_url ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🖼️</Box>}
+                            <Box sx={{ height: 220, overflow: 'hidden', bgcolor: '#f1f5f9', position: 'relative' }}>
+                              {item.image_url ? <Image src={item.image_url} alt={item.name} fill sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} loading="lazy" /> : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🖼️</Box>}
                             </Box>
                             <CardContent sx={{ p: 2.5 }}>
                               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>{item.name}</Typography>
@@ -238,10 +295,13 @@ export default function Home() {
               { icon: <PhoneIcon sx={{ fontSize: 48, color: 'primary.main' }} />, title: 'Call Us', content: <><Typography>0720055705</Typography><Typography>0728167435</Typography></>, btn: <Button variant="contained" color="primary" href="tel:0720055705" fullWidth>Call Now</Button> },
               { icon: <WhatsAppIcon sx={{ fontSize: 48, color: '#25D366' }} />, title: 'WhatsApp', content: <><Typography>0720055705</Typography><Typography>0728167435</Typography></>, btn: <Button variant="contained" onClick={() => openWhatsApp('0720055705')} fullWidth sx={{ bgcolor: '#25D366', '&:hover': { bgcolor: '#128C7E' } }}>Chat on WhatsApp</Button> },
               { icon: <EmailIcon sx={{ fontSize: 48, color: 'primary.main' }} />, title: 'Email', content: <Typography>pamutecsolar@gmail.com</Typography>, btn: <Button variant="contained" color="primary" href="mailto:pamutecsolar@gmail.com" fullWidth>Send Email</Button> },
-              { icon: <InstagramIcon sx={{ fontSize: 48, color: '#E1306C' }} />, title: 'Instagram', content: <Typography>@pamutecsolarkenya</Typography>, btn: <Button variant="contained" href="https://www.instagram.com/pamutecsolarkenya" target="_blank" fullWidth sx={{ bgcolor: '#E1306C', '&:hover': { bgcolor: '#C13584' } }}>Follow Us</Button> },
-              { icon: <FacebookIcon sx={{ fontSize: 48, color: '#1877F2' }} />, title: 'Facebook', content: <Typography>Seven SS Stars Solar</Typography>, btn: <Button variant="contained" href="https://www.facebook.com/pamutecSolarKenya/" target="_blank" fullWidth sx={{ bgcolor: '#1877F2', '&:hover': { bgcolor: '#0d5bbd' } }}>Like Page</Button> },
-              { icon: <MessageIcon sx={{ fontSize: 48, color: '#00B2FF' }} />, title: 'Messenger', content: <Typography>Chat with us</Typography>, btn: <Button variant="contained" href="https://m.me/pamutecSolarKenya" target="_blank" fullWidth sx={{ bgcolor: '#00B2FF', '&:hover': { bgcolor: '#0084cc' } }}>Message Us</Button> },
-              { icon: <LocationOnIcon sx={{ fontSize: 48, color: 'primary.main' }} />, title: 'Location', content: <Typography>Kyang'ombe,Atlantis Business Park</Typography>, btn: <Button variant="outlined" color="primary" href="https://www.google.com/maps/dir/-1.2841,36.8155/Arma+Dei+International+Ltd,+Warehouse+D6+Atlantis+Business+Park,+Nairobi/@-1.3129295,36.8319005,14z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x182f1370f2478765:0xaffb7d9ab989cee!2m2!1d36.8797069!2d-1.3403326?entry=ttu&g_ep=EgoyMDI2MDYyMi4wIKXMDSoASAFQAw%3D%3D" target="_blank" fullWidth>Get Directions</Button> },
+              { icon: <InstagramIcon sx={{ fontSize: 48, color: '#E1306C' }} />, title: 'Instagram', content: <Typography>@pamutecsolarkenya</Typography>, btn: <Button variant="contained" href="https://www.instagram.com/pamutecsolarkenya" target="_blank" rel="noopener noreferrer" fullWidth sx={{ bgcolor: '#E1306C', '&:hover': { bgcolor: '#C13584' } }}>Follow Us</Button> },
+              { icon: <FacebookIcon sx={{ fontSize: 48, color: '#1877F2' }} />, title: 'Facebook', content: <Typography>Seven SS Stars Solar</Typography>, btn: <Button variant="contained" href="https://www.facebook.com/pamutecSolarKenya/" target="_blank" rel="noopener noreferrer" fullWidth sx={{ bgcolor: '#1877F2', '&:hover': { bgcolor: '#0d5bbd' } }}>Like Page</Button> },
+              { icon: <MessageIcon sx={{ fontSize: 48, color: '#00B2FF' }} />, title: 'Messenger', content: <Typography>Chat with us</Typography>, btn: <Button variant="contained" href="https://m.me/pamutecSolarKenya" target="_blank" rel="noopener noreferrer" fullWidth sx={{ bgcolor: '#00B2FF', '&:hover': { bgcolor: '#0084cc' } }}>Message Us</Button> },
+              /* Was a mismatched "Arma Dei International Ltd, Warehouse D6" maps
+                 link (audit P0 #4, different registered business) -- now reads
+                 the single, flagged-for-verification company.mapsUrl instead. */
+              { icon: <LocationOnIcon sx={{ fontSize: 48, color: 'primary.main' }} />, title: 'Location', content: <Typography>Kyang'ombe, Atlantis Business Park</Typography>, btn: <Button variant="outlined" color="primary" href={company.mapsUrl} target="_blank" rel="noopener noreferrer" fullWidth>Get Directions</Button> },
             ].map((c, i) => (
               <Grid item xs={12} sm={6} md={3} key={i}>
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}>

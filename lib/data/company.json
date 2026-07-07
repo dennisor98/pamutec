@@ -1,13 +1,30 @@
 {
   "name": "Seven SS Stars Solar",
+  "legalName": "Seven SS Stars Solar",
   "tagline": "The Best Water Solar Heaters Provider",
   "slogan": "We Lead, Others Follow",
-  "description": "Seven SS Stars Solaris a leading manufacturer of thermal solar energy technologies. We have been designing and producing high-quality solar water heaters for over 13 years.",
+  "description": "Seven SS Stars Solar is a leading manufacturer of thermal solar energy technologies. We have been designing and producing high-quality solar water heaters for over 13 years.",
   "certifications": [
     "KEBS Approved",
     "EPRA (Energy and Petroleum Regulatory Authority) Approved",
     "ERC Certified Technicians"
   ],
   "about": "We have a complete line of pressurized and nonpressurized solar water heater Kenya available in a variety of capacities to suit your needs. We offer the best solar water heater prices in Kenya. Our range of products include solar collector, split solar water heaters, integrated solar water heaters, vacuum tube, and flat plate solar water heaters.",
-  "footer": "Seven SS Stars Solar"
+  "footer": "Seven SS Stars Solar",
+  "url": "https://sevenssstarskenya.co.ke",
+  "phones": ["+254720055705", "+254728167435"],
+  "email": "pamutecsolar@gmail.com",
+  "_ADDRESS_NEEDS_VERIFICATION": "The site text says 'Kyang'ombe, Atlantis Business Park' but the old Google Maps link pointed to 'Arma Dei International Ltd, Warehouse D6' -- a different registered business (audit P0 #4). Confirm the real, current address with the business owner before publishing the fields below; they are placeholders copied from the site text only.",
+  "address": {
+    "streetAddress": "Atlantis Business Park, Kyang'ombe",
+    "addressLocality": "Nairobi",
+    "addressCountry": "KE"
+  },
+  "_MAPS_LINK_NEEDS_VERIFICATION": "The homepage and the /contact page each hard-coded a DIFFERENT Google Maps link (one pointed to 'Arma Dei International Ltd, Warehouse D6', a different registered business -- audit P0 #4). Both pages now read this single mapsUrl instead, but confirm it actually resolves to the real business address before publishing.",
+  "mapsUrl": "https://maps.app.goo.gl/AQgVMePU56cZ8mzj8",
+  "sameAs": [
+    "https://www.instagram.com/pamutecsolarkenya",
+    "https://www.facebook.com/pamutecSolarKenya/"
+  ],
+  "_BRAND_NEEDS_VERIFICATION": "Social profiles above still use the old 'pamutecsolarkenya' handle while the site brand is 'Seven SS Stars Solar' (audit P0 #3). Update sameAs, the Instagram/Facebook/Messenger links in Footer.tsx and app/page.tsx, and the actual social profile display names/handles to one consistent brand."
 }

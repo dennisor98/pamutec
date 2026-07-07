@@ -23,7 +23,7 @@ export default function FloatingButtons() {
 
   const openWhatsApp = (phone: string) => {
     const kenyaPhone = `254${phone.substring(1)}`;
-    window.open(`https://wa.me/${kenyaPhone}`, '_blank');
+    window.open(`https://wa.me/${kenyaPhone}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
