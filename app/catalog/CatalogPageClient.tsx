@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { Box, Container, Typography, Grid, Card, CardMedia, TextField, Button, Chip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { motion } from 'framer-motion';
@@ -116,14 +115,12 @@ export default function CatalogPageClient() {
                             sx={{ height: '100%', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)', cursor: 'pointer' } }}
                             onClick={() => handleProductClick(product)}
                           >
-                            <Box sx={{ height: 250, overflow: 'hidden', position: 'relative' }}>
-                              <Image
+                            <Box sx={{ height: 250, overflow: 'hidden' }}>
+                              <img
                                 src={product.image}
                                 alt={product.name}
-                                fill
-                                sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                                style={{ objectFit: 'cover' }}
                                 loading="lazy"
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               />
                             </Box>
                           </Card>

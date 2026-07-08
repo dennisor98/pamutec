@@ -1,13 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    // Serve AVIF first, fall back to WebP -- both far smaller than the
-    // original JPEG/PNG uploads. Fixes: LCP 7.9s, 9.52MB image payload,
-    // "convert to WebP", "responsive images" audit findings.
-    formats: ['image/avif', 'image/webp'],
-    deviceSizes: [360, 480, 640, 768, 1024, 1280, 1600, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 220, 256],
-    minimumCacheTTL: 31536000, // 1 year -- pairs with "JS/CSS files are cached" strength
     remotePatterns: [
       {
         protocol: 'http',
@@ -21,6 +14,8 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
+    // Also allow any http hostname for local dev
+    domains: [],
   },
 
   // --- P1 #6: URL canonicalization (www vs non-www) ---

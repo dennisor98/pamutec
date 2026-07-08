@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Box, Container, Typography, Grid, Card, CardMedia, CardContent } from '@mui/material';
 import { motion } from 'framer-motion';
 import company from '@/lib/data/company.json';
@@ -43,12 +42,11 @@ export default function AboutPageClient() {
                 transition={{ duration: 0.6 }}
               >
                 <Box sx={{ position: 'relative', height: 400, borderRadius: 2, overflow: 'hidden' }}>
-                  <Image
+                  <img
                     src="/images/abt.png"
                     alt="About Seven SS Stars Solar - our team and solar water heater installations"
-                    fill
-                    sizes="(max-width: 900px) 100vw, 50vw"
-                    style={{ objectFit: 'cover' }}
+                    loading="lazy"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </Box>
               </motion.div>

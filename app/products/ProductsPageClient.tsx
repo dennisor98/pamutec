@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { Box, Container, Typography, Grid, Card, CardMedia, CardContent } from '@mui/material';
 import { motion } from 'framer-motion';
 import products from '@/lib/data/products.json';
@@ -57,14 +56,12 @@ export default function ProductsPageClient() {
                     sx={{ height: '100%', display: 'flex', flexDirection: 'column', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-4px)', cursor: 'pointer' } }}
                     onClick={() => handleProductClick(product)}
                   >
-                    <Box sx={{ height: 350, overflow: 'hidden', position: 'relative' }}>
-                      <Image
+                    <Box sx={{ height: 350, overflow: 'hidden' }}>
+                      <img
                         src={product.image}
                         alt={product.name}
-                        fill
-                        sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                        style={{ objectFit: 'cover' }}
                         loading={index < 3 ? 'eager' : 'lazy'}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     </Box>
                     <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { Box, Container, Typography, Grid, Card, CardContent, Button, TextField, Chip } from '@mui/material';
 import { motion } from 'framer-motion';
 import SearchIcon from '@mui/icons-material/Search';
@@ -86,9 +85,7 @@ export default function Home() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <Box sx={{ bgcolor: 'primary.main', color: 'white', py: 12, textAlign: 'center' }}>
             <Container maxWidth="lg">
-              <Box sx={{ mb: 4 }}>
-                <Image src="/images/logo.png" alt="Seven SS Stars Solar logo" width={120} height={120} priority unoptimized />
-              </Box>
+              <Box sx={{ mb: 4 }}><img src="/images/logo.png" alt="Seven SS Stars Solar logo" style={{ height: 120, width: 'auto' }} /></Box>
               <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>{company.name}</Typography>
               <Typography variant="h6" sx={{ mb: 4 }}>{company.slogan}</Typography>
               <Typography variant="body1" sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>{company.tagline}</Typography>
@@ -99,12 +96,21 @@ export default function Home() {
         {/* Carousel */}
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }}>
           <Box sx={{ position: 'relative', height: 500, overflow: 'hidden' }}>
-            <motion.div key={currentImageIndex} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} style={{ position: 'absolute', inset: 0 }}>
-              {/* priority + fill on the first slide preloads and serves the
-                  Largest Contentful Paint image (was 7.9s LCP against a
-                  raw 50-92KB jpeg with no preload -- audit item 1.1). */}
-              <Image src={carouselImages[currentImageIndex]} alt="Seven SS Stars Solar installations and products" fill sizes="100vw" style={{ objectFit: 'cover' }} priority={currentImageIndex === 0} />
-            </motion.div>
+            {/* fetchPriority + eager loading on the first slide is a native-HTML
+                LCP hint (was 7.9s LCP with no preload -- audit item 1.1) --
+                no next/image dependency, so it can't affect image fetching. */}
+            <motion.img
+              key={currentImageIndex}
+              src={carouselImages[currentImageIndex]}
+              alt="Seven SS Stars Solar installations and products"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              loading={currentImageIndex === 0 ? 'eager' : 'lazy'}
+              // @ts-ignore -- fetchpriority isn't in React's DOM typings yet
+              fetchpriority={currentImageIndex === 0 ? 'high' : 'auto'}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
             <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)' }} />
             <Box sx={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 1.5, zIndex: 1 }}>
               {carouselImages.map((_, i) => (
@@ -128,8 +134,8 @@ export default function Home() {
         <Container maxWidth="lg" sx={{ py: 10 }}>
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={6}>
-              <Box sx={{ position: 'relative', height: 420, borderRadius: 3, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
-                <Image src={about.image_url || '/images/abt.png'} alt="About Seven SS Stars Solar" fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: 'cover' }} loading="lazy" />
+              <Box sx={{ height: 420, borderRadius: 3, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.12)' }}>
+                <img src={about.image_url || '/images/abt.png'} alt="About Seven SS Stars Solar" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </Box>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -179,9 +185,9 @@ export default function Home() {
                       <Grid item xs={12} sm={6} md={4} key={product.id}>
                         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }}>
                           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 3, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', transition: 'all 0.3s', '&:hover': { transform: 'translateY(-6px)', boxShadow: '0 12px 32px rgba(0,0,0,0.15)', cursor: 'pointer' } }} onClick={() => handleProductClick({ ...product, image: product.image_url })}>
-                            <Box sx={{ height: 260, overflow: 'hidden', bgcolor: '#f1f5f9', position: 'relative' }}>
+                            <Box sx={{ height: 260, overflow: 'hidden', bgcolor: '#f1f5f9' }}>
                               {product.image_url
-                                ? <Image src={product.image_url} alt={product.name} fill sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} loading="lazy" />
+                                ? <img src={product.image_url} alt={product.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 64 }}>📦</Box>
                               }
                             </Box>
@@ -251,8 +257,8 @@ export default function Home() {
                       <Grid item xs={12} sm={6} md={4} key={item.id}>
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: ii * 0.05 }}>
                           <Card sx={{ height: '100%', borderRadius: 3, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', transition: 'all 0.3s', '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 32px rgba(0,0,0,0.13)', cursor: 'pointer' } }} onClick={() => handleProductClick({ ...item, image: item.image_url })}>
-                            <Box sx={{ height: 220, overflow: 'hidden', bgcolor: '#f1f5f9', position: 'relative' }}>
-                              {item.image_url ? <Image src={item.image_url} alt={item.name} fill sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" style={{ objectFit: 'cover' }} loading="lazy" /> : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🖼️</Box>}
+                            <Box sx={{ height: 220, overflow: 'hidden', bgcolor: '#f1f5f9' }}>
+                              {item.image_url ? <img src={item.image_url} alt={item.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48 }}>🖼️</Box>}
                             </Box>
                             <CardContent sx={{ p: 2.5 }}>
                               <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>{item.name}</Typography>

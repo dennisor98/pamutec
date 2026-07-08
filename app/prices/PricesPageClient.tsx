@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Box, Container, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 
@@ -40,12 +39,10 @@ export default function PricesPageClient() {
             transition={{ duration: 0.6 }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Image
+              <img
                 src="/images/prices.png"
                 alt="Seven SS Stars Solar pricing information for water heaters and panels"
-                width={1124}
-                height={742}
-                sizes="(max-width: 1124px) 100vw, 1124px"
+                loading="lazy"
                 style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }}
               />
             </Box>
