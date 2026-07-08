@@ -9,11 +9,7 @@ import company from '@/lib/data/company.json';
 
 const SITE_URL = 'https://sevenssstarskenya.co.ke';
 
-// NOTE (P0 #2 -- Missing Google Analytics): set NEXT_PUBLIC_GA_ID in your
-// environment (.env.local / hosting dashboard) to the real GA4 measurement
-// ID (format G-XXXXXXXXXX). The tag below is skipped entirely if unset, so
-// this is safe to ship before that value exists.
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
+const GA_MEASUREMENT_ID = 'G-E03PZPGCDC';
 
 export const metadata: Metadata = {
   // Shortened to under 60 characters (was 66) so it stops truncating in
